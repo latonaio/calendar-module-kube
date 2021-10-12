@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package calendarpb;
+
+option go_package = "bitbucket.org/latonaio/calendar-module-kube/cmd/calendar-server/proto/calendarpb";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+service Calendar {
+    rpc CreateSchedule(Schedule) returns (ResponseSchedule);
+    rpc UpdateSchedule(Schedule) returns (ResponseSchedule);
+    rpc GetScheduleList(google.protobuf.Empty) returns (ScheduleList);
+    rpc SearchScheduleByUserId(User) returns (ScheduleList);
+    rpc SearchScheduleByUserName(User) returns (ScheduleList);
+    rpc SearchScheduleByTagName(Tag) returns (ScheduleList);
+    rpc SearchScheduleByDate(Date) returns (ScheduleList);
+    rpc DeleteSchedule(Schedule) returns (ResponseSchedule);
+    rpc CreateTag(Tag) returns (ResponseTag);
+    rpc UpdateTag(Tag) returns (ResponseTag);
+    rpc GetTagList(google.protobuf.Empty) returns (TagList);
+}
+
+message Schedule {
+    uint32 scheduleId = 1;
+    Date date = 2;
+    string title = 3;
+    string description = 4;
+    User user = 5;
+    repeated Tag tagList = 6;
+}
+
+message Tag {
+    uint32 tagId = 1;
+    string tagName = 2;
+}
+
+message User {
+    uint32 userId = 1;
+    string userName = 2;
+}
+
+message Date {
+    google.protobuf.Timestamp start = 1;
+    google.protobuf.Timestamp end = 2;
+}
+
+enum ResponseStatusCode {
+    Unknown = 0;
+    Success = 1;
+    Failed = 2;
+}
+
+message ResponseSchedule {
+    Schedule schedule = 1;
+    ResponseStatusCode statusCode = 2;
+}
+
+message ResponseTag {
+    Tag tag = 1;
+    ResponseStatusCode statusCode = 2;
+}
+
+message ScheduleList {
+    repeated Schedule scheduleList = 1;
+    ResponseStatusCode statusCode = 2;
+}
+
+message TagList {
+    repeated Tag tagList = 1;
+    ResponseStatusCode statusCode = 2;
+}

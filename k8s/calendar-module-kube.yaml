@@ -1,0 +1,61 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: calendar-module-kube
+  labels:
+    app: calendar-module-kube
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: calendar-module-kube
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calendar-module-kube
+  labels:
+    app: calendar-module-kube
+spec:
+  selector:
+    matchLabels:
+      app: calendar-module-kube
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: calendar-module-kube
+    spec:
+      containers:
+        - image: latonaio/calendar-module-kube:latest
+          name: calendar-module-kube
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DB_HOST
+              value: "mysql"
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_USER
+              value: <username>
+            - name: DB_PASSWORD
+              value: <password>
+            - name: DB_NAME
+              value: "omotebako_calendar"
+            - name: SERVER_HOST
+              value: "0.0.0.0"
+            - name: SERVER_PORT
+              value: "8080"
+          ports:
+            - containerPort: 8080
+              name: calendar
+          resources:
+            limits:
+              cpu: "1"
+              memory: "200Mi"
+            requests:
+              cpu: "0.5"
+              memory: "100Mi"
